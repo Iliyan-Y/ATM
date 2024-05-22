@@ -1,16 +1,18 @@
-import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
+import * as cdk from "aws-cdk-lib";
+import { Construct } from "constructs";
+import { createApiGateway } from "./apiGateway";
+import { testLambda } from "./lambda/testNode";
+import { LambdaIntegration } from "aws-cdk-lib/aws-apigateway";
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 export class AtmStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
+	constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+		super(scope, id, props);
 
-    // The code that defines your stack goes here
-
-    // example resource
-    // const queue = new sqs.Queue(this, 'AtmQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
-  }
+		const api = createApiGateway(this, "dev");
+		const testFn = testLambda(this);
+		const testHandler = new LambdaIntegration(testFn);
+		const testPath = api.root.addResource("test");
+		testPath.addMethod("POST", testHandler);
+	}
 }
