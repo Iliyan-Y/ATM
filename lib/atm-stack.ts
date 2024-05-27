@@ -23,12 +23,13 @@ export class AtmStack extends cdk.Stack {
 			// aws.cognito.signin.user.admin -> allow cognito auth token;
 			// openid -> allow SSO auth token
 			// https://docs.aws.amazon.com/cognito/latest/developerguide/cognito-user-pools-app-idp-settings.html
-			authorizationScopes: ["aws.cognito.signin.user.admin", "openid"],
+			authorizationScopes: ["aws.cognito.signin.user.admin"],
 		};
 
 		//// ENDPOINTS ////
 		const testFn = testLambda(this);
 		const testEndpoint = api.root.addResource("test");
-		testEndpoint.addMethod("GET", new LambdaIntegration(testFn), authProps);
+		testEndpoint.addMethod("POST", new LambdaIntegration(testFn), authProps);
 	}
 }
+//
